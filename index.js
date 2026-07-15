@@ -90,6 +90,41 @@ client.on('messageCreate', async (message) => {
         client.channels.cache.get('1526959249605922887').send(`🔇 **Muted:** ${member.user.tag} | **Reason:** ${reason} | **By:** ${message.author.tag}`);
         message.reply('User muted successfully.');
     }
+    // .server komandası
+    else if (message.content === '.server') {
+        const embed = new EmbedBuilder()
+            .setTitle(`Server Information: ${message.guild.name}`)
+            .addFields(
+                { name: 'Total Members', value: `${message.guild.memberCount}`, inline: true },
+                { name: 'Owner', value: `<@${message.guild.ownerId}>`, inline: true },
+                { name: 'Created At', value: `${message.guild.createdAt.toDateString()}`, inline: true }
+            )
+            .setColor(0x0099FF);
+        message.reply({ embeds: [embed] });
+    }
+    // .user komandası
+    else if (message.content.startsWith('.user')) {
+        const member = message.mentions.members.first() || message.member;
+        const embed = new EmbedBuilder()
+            .setTitle(`User Info: ${member.user.tag}`)
+            .setThumbnail(member.user.displayAvatarURL())
+            .addFields(
+                { name: 'User ID', value: `${member.id}`, inline: true },
+                { name: 'Joined Server', value: `${member.joinedAt.toDateString()}`, inline: true },
+                { name: 'Roles', value: `${member.roles.cache.size - 1}`, inline: true }
+            )
+            .setColor(0x00FF00);
+        message.reply({ embeds: [embed] });
+    }
+    // .avatar komandası
+    else if (message.content.startsWith('.avatar')) {
+        const member = message.mentions.members.first() || message.member;
+        const embed = new EmbedBuilder()
+            .setTitle(`${member.user.tag}'s Avatar`)
+            .setImage(member.user.displayAvatarURL({ dynamic: true, size: 512 }))
+            .setColor(0xFF0000);
+        message.reply({ embeds: [embed] });
+    }
 });
 
 client.login(process.env.TOKEN);
