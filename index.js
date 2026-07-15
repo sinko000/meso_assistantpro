@@ -75,6 +75,64 @@ client.on('messageCreate', async (message) => {
         client.channels.cache.get('1526959249605922887').send(`🔇 **Muted:** ${member.user.tag} | **Reason:** ${reason} \vert{} **By:**${message.author.tag}`);
         message.reply('User muted successfully.');
     }
+    const { Client, GatewayIntentBits } = require('discord.js');
+const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
+const express = require('express');
+
+const app = express();
+app.get('/', (req, res) => res.send('Bot is online and running!'));
+app.listen(3000);
+
+const client = new Client({
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildVoiceStates
+    ]
+});
+
+// İstifadəçiləri yadda saxlamaq üçün siyahı
+const ballUsers = new Set();
+
+client.on('messageCreate', async (message) => {
+    // 1. Avtomatik etiketləmə funksiyası (Countryball botunun mesajını izləyir)
+    // Bot ID: 999736048596816014 | Kanal ID: 1322625226768384130
+    if (message.author.id === '999736048596816014' && message.channel.id === '1322625226768384130') {
+        if (message.content.includes('new countryball spawner')) {
+            const mentions = Array.from(ballUsers).map(id => `<@${id}>`).join(' ');
+            if (mentions.length > 0) {
+                message.channel.send(`Hey ${mentions}, a new countryball spawned!`);
+            }
+        }
+    }
+
+    // Prefix yoxlaması
+    if (!message.content.startsWith('.')) return;
+
+    // .ballon komandası
+    if (message.content === '.ballon') {
+        ballUsers.add(message.author.id);
+        message.reply('✅ Notifications enabled! You will be pinged when a countryball spawns.');
+    }
+    // .balloff komandası
+    else if (message.content === '.balloff') {
+        ballUsers.delete(message.author.id);
+        message.reply('❌ Notifications disabled.');
+    }
+    // .ballstatus komandası
+    else if (message.content === '.ballstatus') {
+        const status = ballUsers.has(message.author.id) ? 'ON 🟢' : 'OFF 🔴';
+        message.reply(`**Countryball Status:**\n-------------------\nStatus: ${status}\n-------------------`);
+    }
+
+    // Digər komandalar (join, ping, leave, ban, kick, mute...)
+    // ... bura əvvəlki kodlarını olduğu kimi qoya bilərsən
+    else if (message.content === '.join') { /* ... */ }
+    // ... digərləri ...
+});
+
+client.login(process.env.TOKEN);
 });
 
 client.login(process.env.TOKEN);
