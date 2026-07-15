@@ -2,10 +2,11 @@ const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
 const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
 const express = require('express');
 
+// Express serverini Render üçün konfiqurasiya edirik
 const app = express();
-const port = process.env.PORT || 3000;
-app.get('/', (req, res) => res.send('Bot is online!'));
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.get('/', (req, res) => res.status(200).send('Bot is active!'));
+const port = process.env.PORT || 10000;
+app.listen(port, () => console.log(`Server is running on port ${port}`));
 
 const client = new Client({
     intents: [
@@ -17,13 +18,18 @@ const client = new Client({
 });
 
 client.on('messageCreate', async (message) => {
+    // Prefix yoxlaması
     if (!message.content.startsWith('.')) return;
 
-    // Mövcud Komandalar
+    // Komandalar
     if (message.content === '.join') {
         const channel = message.member.voice.channel;
         if (!channel) return message.reply('Please join a voice channel first!');
-        joinVoiceChannel({ channelId: channel.id, guildId: channel.guild.id, adapterCreator: channel.guild.voiceAdapterCreator });
+        joinVoiceChannel({ 
+            channelId: channel.id, 
+            guildId: channel.guild.id, 
+            adapterCreator: channel.guild.voiceAdapterCreator 
+        });
         message.reply('Successfully joined the voice channel!');
     }
     else if (message.content === '.ping') {
@@ -31,7 +37,10 @@ client.on('messageCreate', async (message) => {
     }
     else if (message.content === '.leave') {
         const connection = getVoiceConnection(message.guild.id);
-        if (connection) { connection.destroy(); message.reply('Successfully left the voice channel!'); }
+        if (connection) { 
+            connection.destroy(); 
+            message.reply('Successfully left the voice channel!'); 
+        }
         else { message.reply('I am not in a voice channel!'); }
     }
     else if (message.content.startsWith('.ban')) {
@@ -61,8 +70,7 @@ client.on('messageCreate', async (message) => {
         client.channels.cache.get('1526959249605922887').send(`🔇 **Muted:** ${member.user.tag} | **Reason:** ${reason}`);
         message.reply('User muted successfully.');
     }
-
-    // Yeni Embed Komandaları
+    // Embed Komandaları
     else if (message.content === '.server') {
         const embed = new EmbedBuilder()
             .setTitle(`Server: ${message.guild.name}`)
