@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
+const { joinVoiceChannel, getVoiceConnection } = require('@discordjs/voice');
 const express = require('express');
 
 const app = express();
@@ -28,17 +28,12 @@ client.on('messageCreate', async (message) => {
         });
         message.reply('Successfully joined the voice channel!');
     }
-    // New commands will be added here
-});
-
-client.login(process.env.TOKEN);
-// !ping command
+    // !ping command
     else if (message.content === '!ping') {
         message.reply('Pong! 🏓');
     }
     // !leave command
     else if (message.content === '!leave') {
-        const { getVoiceConnection } = require('@discordjs/voice');
         const connection = getVoiceConnection(message.guild.id);
         if (connection) {
             connection.destroy();
@@ -47,3 +42,6 @@ client.login(process.env.TOKEN);
             message.reply('I am not in a voice channel!');
         }
     }
+});
+
+client.login(process.env.TOKEN);
