@@ -32,3 +32,18 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(process.env.TOKEN);
+// !ping command
+    else if (message.content === '!ping') {
+        message.reply('Pong! 🏓');
+    }
+    // !leave command
+    else if (message.content === '!leave') {
+        const { getVoiceConnection } = require('@discordjs/voice');
+        const connection = getVoiceConnection(message.guild.id);
+        if (connection) {
+            connection.destroy();
+            message.reply('Successfully left the voice channel!');
+        } else {
+            message.reply('I am not in a voice channel!');
+        }
+    }
